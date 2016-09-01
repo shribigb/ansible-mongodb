@@ -9,6 +9,10 @@
 - include: "{{ansible_os_family}}/install.yml"
   tags: [mongodb]
 
+- name: Include preset.yml
+  include: preset.yml
+  tags: [mongodb]
+
 - name: Include configuration.yml
   include: configure.yml
   tags: [mongodb]

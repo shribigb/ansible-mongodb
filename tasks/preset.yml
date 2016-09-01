@@ -1,0 +1,17 @@
+---
+
+# Steps to disable THP (Transparent Huage Pages)
+# https://docs.mongodb.com/manual/tutorial/transparent-huge-pages/
+- name: Copy disable-thp script to /etc/init.d/ directory
+
+- name: Make disable-thp script executable
+
+- name: Execute disable-thp script
+
+- name: Enable disable-thp script run at system startup
+
+
+# Steps to raise mongod ulimit
+# https://docs.mongodb.com/manual/reference/ulimit/
+- name: Copy ulimit config file to /etc/security/limit.d/ directory
+
