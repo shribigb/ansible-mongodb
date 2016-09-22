@@ -1,0 +1,12 @@
+---
+
+# Set up replica set / sharded cluster thru Ops Manager API
+# This playbook is meant to operate from only 1 node in the cluster
+# https://docs.opsmanager.mongodb.com/current/tutorial/create-cluster-with-api/
+
+- name: Create automation configuration
+  template: src=/templates/opsmgr_api_replset.js dest=/tmp/opsmgr_api_replset mode=0644
+
+- name: Send configuration to Ops Manager
+  command: curl -u "ansible@expedia.com:56e59981-8a1e-48d1-8514-8cbc11dc282d" -H "Content-Type: application/json" "http://phelmondbbi001.karmalab.net:8080/api/public/v1.0/groups/5759e525e4b088845ebcfabd/automationConfig" --digest -i -X PUT --data @/tmp/opsmgr_api_replset
+

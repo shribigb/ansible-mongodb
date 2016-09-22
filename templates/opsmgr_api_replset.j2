@@ -1,0 +1,96 @@
+{
+   "options": {
+        "downloadBase": "/var/lib/mongodb-mms-automation",
+        "downloadBaseWindows": "C:\\mongodb-mms-automation"
+    },
+    "mongoDbVersions": [
+        {"name": {{ mongodb_version }}}
+    ],
+    "processes": [
+        {
+            "args2_6": {
+                "net": {
+                    "port": {{ mongodb_net_port }}
+                },
+                "replication": {
+                    "replSetName": {{ mongodb_replication_replset }}
+                },
+                "storage": {
+                    "dbPath": {{ mongodb_storage_dbpath }}
+                },
+                "systemLog": {
+                    "destination": "file",
+                    "path": {{ mongodb_systemlog_path }}
+                }
+            },
+            "hostname": "{{ hostvars[groups['mongo_master'][0]]['ansible_eth0']['ipv4']['address'] }}",
+            "name": "apitest0",
+            "processType": "mongod",
+            "version": {{ mongodb_version }},
+            "authSchemaVersion": 5
+        },
+        {
+            "args2_6": {
+                "net": {
+                    "port": {{ mongodb_net_port }}
+                },
+                "replication": {
+                    "replSetName": {{ mongodb_replication_replset }}
+                },
+                "storage": {
+                    "dbPath": {{ mongodb_storage_dbpath }}
+                },
+                "systemLog": {
+                    "destination": "file",
+                    "path": {{ mongodb_systemlog_path }}
+                }
+            },
+            "hostname": "{{ hostvars[groups['mongo_replicas'][0]]['ansible_eth0']['ipv4']['address'] }}",
+            "name": "apitest1",
+            "processType": "mongod",
+            "version": {{ mongodb_version }},
+            "authSchemaVersion": 5
+        },
+        {
+            "args2_6": {
+                "net": {
+                    "port": {{ mongodb_net_port }}
+                },
+                "replication": {
+                    "replSetName": {{ mongodb_replication_replset }}
+                },
+                "storage": {
+                    "dbPath": {{ mongodb_storage_dbpath }}
+                },
+                "systemLog": {
+                    "destination": "file",
+                    "path": {{ mongodb_systemlog_path }}
+                }
+            },
+            "hostname": "{{ hostvars[groups['mongo_replicas'][1]]['ansible_eth0']['ipv4']['address'] }}",
+            "name": "apitest2",
+            "processType": "mongod",
+            "version": {{ mongodb_version }},
+            "authSchemaVersion": 5
+        }
+    ],
+    "replicaSets": [
+        {
+            "_id": "apitest",
+            "members": [
+                {
+                    "_id": 0,
+                    "host": "apitest0"
+                },
+                {
+                    "_id": 1,
+                    "host": "apitest1"
+                },
+                {
+                    "_id": 2,
+                    "host": "apitest2",
+                }
+            ]
+        }
+    ]
+}
