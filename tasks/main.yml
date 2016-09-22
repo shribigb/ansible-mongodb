@@ -98,8 +98,7 @@
 
 - name: Install Automation Agent
   include: mms-agent.yml
-  when: ( mongodb_opsmgr_api_install
-        and mongodb_mms_api_key != ""
+  when: mongodb_mms_api_key != ""
   tags: [mongodb]
 
 - name: Include Ops Manager API install
