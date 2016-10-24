@@ -1,6 +1,9 @@
 ---
 
-# Steps to disable THP (Transparent Huage Pages)
+# Reference:
+# https://docs.mongodb.com/manual/administration/production-checklist-operations/#operating-system-configuration
+
+# Disable THP (Transparent Huage Pages)
 # https://docs.mongodb.com/manual/tutorial/transparent-huge-pages/
 - name: Copy disable-thp script to /etc/init.d/ directory
 
@@ -11,7 +14,33 @@
 - name: Enable disable-thp script run at system startup
 
 
-# Steps to raise mongod ulimit
+# Adjust readahead settings
+- name: Set readahead setting to 0
+
+
+# Disable 'tuned' tool
+
+
+# Use 'noop' or 'deadline' disk schedulers for SSD drives
+
+
+# Disable NUMA if running on physicals
+
+
+# Raise mongod ulimit
 # https://docs.mongodb.com/manual/reference/ulimit/
 - name: Copy ulimit config file to /etc/security/limit.d/ directory
 
+
+# Use 'noatime' for dbPath mount point
+# https://www.howtoforge.com/reducing-disk-io-by-mounting-partitions-with-noatime
+
+
+# Configure sufficient file handles, kernel pid limit, and max threads/process
+
+
+# Ensure system has swap space configured
+
+
+# Ensure system default TCP keepalive is set to 120
+# https://docs.mongodb.com/manual/faq/diagnostics/#faq-keepalive
