@@ -1,15 +1,15 @@
 ---
 
 - name: Install MMS agent pt. 1
-  get_url: url={{mongodb_mms_agent_pkg}} dest=/tmp/mms-agent.deb
+  get_url: url={{ mongodb_mms_agent_pkg }} dest=/tmp/automation-agent.rpm
   register: mongodb_mms_agent_loaded
 
 - name: Install MMS agent pt. 2
-  apt: deb=/tmp/mms-agent.deb
+  yum: name=/tmp/automation-agent.rpm state=present
   when: mongodb_mms_agent_loaded.changed
 
 - name: Configure the MMS agent pt. 1
-  file: state=directory path=/etc/mongodb-mms owner={{mongodb_user}} group={{mongodb_user}} mode=0755
+  file: state=directory path=/etc/mongodb-mms owner={{ mongodb_user }} group={{ mongodb_user }} mode=0755
 
 - name: Configure the MMS agent pt. 2
   template: src=automation-agent.config.j2 dest=/etc/mongodb-mms/automation-agent.config
