@@ -1,10 +1,10 @@
 ---
 
-- include_vars: "{{ansible_distribution}}.yml"
-
-- name: Include preset.yml
-  include: preset.yml
+- name: Include Linux system optimization
+  include: system_optimization.yml
   tags: [mongodb]
+
+- include_vars: "{{ansible_distribution}}.yml"
 
 - include: "{{ansible_os_family}}/install.yml"
   tags: [mongodb]
