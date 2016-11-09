@@ -21,8 +21,8 @@ case $1 in
       return 0
     fi
 
-    echo 'never' > ${thp_path}/enabled
-    echo 'never' > ${thp_path}/defrag
+    echo 'never' | tee ${thp_path}/enabled
+    echo 'never' | tee ${thp_path}/defrag
 
     re='^[0-1]+$'
     if [[ $(cat ${thp_path}/khugepaged/defrag) =~ $re ]]
