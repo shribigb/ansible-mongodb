@@ -32,8 +32,8 @@
 
 # Raise mongod ulimit
 # https://docs.mongodb.com/manual/reference/ulimit/
-- name: Copy ulimit config file to /etc/security/limit.d/
-  copy: src=99-mongodb-nproc.conf dest=/etc/security/limit.d/99-mongodb-nproc.conf
+- name: Copy ulimit config file to /etc/security/limits.d/
+  copy: src=99-mongodb-nproc.conf dest=/etc/security/limits.d/99-mongodb-nproc.conf
 
 
 # Use 'noatime' for dbPath mount point
