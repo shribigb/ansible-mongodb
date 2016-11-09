@@ -54,7 +54,7 @@
   shell: >
     echo "fs.file-max = 98000" | tee -a /etc/sysctl.conf &&
     echo "kernel.pid_max = 64000" | tee -a /etc/sysctl.conf &&
-    echo "kernel.threads-max = 64000" | tee -a /etc/sysctl.conf &&
+    echo "kernel.threads-max = 64000" | tee -a /etc/sysctl.conf
     
 
 # Ensure system has swap space configured
