@@ -8,14 +8,15 @@
 
 # Disable THP (Transparent Huage Pages)
 # https://docs.mongodb.com/manual/tutorial/transparent-huge-pages/
-- name: Disable THP p.1 (copy script to /etc/init.d/)
-  copy: src=disable-transparent-hugepages dest=/etc/init.d/disable-transparent-hugepages mode=0755
+- name: Disable transparent huagepages
+  shell: >
+    echo 'never' | sudo tee /sys/kernel/mm/transparent_hugepage/enabled &&
+    echo 'never' | sudo tee /sys/kernel/mm/transparent_hugepage/defrag
 
-- name: Disable THP p.3 (execute the script)
-  shell: /etc/init.d/disable-transparent-hugepages
-
-- name: Disable THP p.4 (enable the script at system startup)
-  shell: chkconfig --add disable-transparent-hugepages
+- name: Persist thp disabled at boot
+  shell: >
+    echo "echo 'never' | sudo tee /sys/kernel/mm/transparent_hugepage/enabled" | sudo tee -a /etc/rc.local &&
+    echo "echo 'never' | sudo tee /sys/kernel/mm/transparent_hugepage/defrag" | sudo tee -a /etc/rc.local
 
 
 # Adjust readahead settings
@@ -42,19 +43,19 @@
 
 # Configure sufficient file handles, kernel pid limit, and max threads/process
 - name: Configure sufficient file handles (98000)
-  shell: echo 98000 | tee /proc/sys/fs/file-max
+  shell: echo 98000 | sudo tee /proc/sys/fs/file-max
 
 - name: Configure sufficient kernel pid limit (64000)
-  shell: echo 64000 | tee /proc/sys/kernel/pid_max
+  shell: echo 64000 | sudo tee /proc/sys/kernel/pid_max
 
 - name: Configure sufficient max threads per process (64000)
-  shell: echo 64000 | tee /proc/sys/kernel/threads-max
+  shell: echo 64000 | sudo tee /proc/sys/kernel/threads-max
 
 - name: Persist fs.file-max, kernel.pid_max, kernel.threads-max on reboot
   shell: >
-    echo "fs.file-max = 98000" | tee -a /etc/sysctl.conf &&
-    echo "kernel.pid_max = 64000" | tee -a /etc/sysctl.conf &&
-    echo "kernel.threads-max = 64000" | tee -a /etc/sysctl.conf
+    echo "fs.file-max = 98000" | sudo tee -a /etc/sysctl.conf &&
+    echo "kernel.pid_max = 64000" | sudo tee -a /etc/sysctl.conf &&
+    echo "kernel.threads-max = 64000" | sudo tee -a /etc/sysctl.conf
     
 
 # Ensure system has swap space configured
@@ -63,8 +64,8 @@
 # Ensure system default TCP keepalive is set to 120
 # https://docs.mongodb.com/manual/faq/diagnostics/#faq-keepalive
 - name: Set TCP keepalive (120 seconds)
-  shell: echo 300 | tee /proc/sys/net/ipv4/tcp_keepalive_time
+  shell: echo 300 | sudo tee /proc/sys/net/ipv4/tcp_keepalive_time
 
 - name: Persist TCP keepalive setting on reboot
-  shell: echo "net.ipv4.tcp_keepalive_time = 300" | tee -a /etc/sysctl.conf
+  shell: echo "net.ipv4.tcp_keepalive_time = 300" | sudo tee -a /etc/sysctl.conf
 
