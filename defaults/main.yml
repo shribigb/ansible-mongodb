@@ -14,7 +14,7 @@ mongodb_manage_service: true
 mongodb_user: mongodb
 mongodb_uid:
 mongodb_gid:
-mongodb_daemon_name: "{{ 'mongod' if ('mongodb-org' in mongodb_package) else 'mongodb' }}"
+mongodb_daemon_name: "{{ 'mongod' if ('mongodb-org' or 'mongodb-enterprise' in mongodb_package) else 'mongodb' }}"
 
 ## net Options
 mongodb_net_bindip: 0.0.0.0                    # Comma separated list of ip addresses to listen on
@@ -28,7 +28,7 @@ mongodb_processmanagement_fork: false            # Fork server process
 
 ## security Options
 # Disable or enable security. Possible values: 'disabled', 'enabled'
-mongodb_security_authorization: "disabled"
+mongodb_security_authorization: 'disabled'
 mongodb_security_keyfile: /etc/mongodb-keyfile   # Specify path to keyfile with password for inter-process authentication
 
 ## storage Options

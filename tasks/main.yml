@@ -1,17 +1,23 @@
 ---
 
-- name: Include Linux system optimization
-  include: system_optimization.yml
-  tags: [mongodb]
+- debug: msg="mongodb_login_host = {{ mongodb_login_host }}"
+  tags: 
+    - debug
 
-- include_vars: "{{ansible_distribution}}.yml"
+#- name: Include Linux system optimization
+#  include: system_optimization.yml
+#  tags: [mongodb]
 
-- include: "{{ansible_os_family}}/install.yml"
+- include_vars: "{{ ansible_distribution }}.yml"
+
+- include: "{{ ansible_distribution }}/install.yml"
   tags: [mongodb]
 
 - name: Include configuration.yml
   include: configure.yml
   tags: [mongodb]
+
+- debug: msg="mongodb_security_authorization={{ mongodb_security_authorization }}"
 
 - name: Include replication and auth configuration
   include: replication_init_auth.yml
@@ -33,7 +39,7 @@
   tags: [mongodb]
 
 - name: Install Automation Agent
-  include: mms-agent.yml
+  include: automation_agent.yml
   when: mongodb_mms_api_key != ""
   tags: [mongodb]
 

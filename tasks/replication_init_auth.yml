@@ -6,13 +6,13 @@
     login_user: "{{ mongodb_root_admin_name }}"
     login_password: "{{ mongodb_root_admin_password }}"
     replica_set: "{{ mongodb_replication_replset }}"
-    host_name: "{{ item.host_name }}"
-    host_port: "{{ item.host_port|default(27017) }}"
-    host_type: "{{ item.host_type|default('replica') }}"
-    hidden: "{{ item.hidden|default(false) }}"
-    priority: "{{ item.priority|default(1.0) }}"
+    host_name: "{{ item }}"
+    host_port: "{{ hostvar[item].host_port|default(27017) }}"
+    host_type: "{{ hostvar[item].host_type|default('replica') }}"
+    hidden: "{{ hostvar[item].hidden|default(false) }}"
+    priority: "{{ hostvar[item].priority|default(1.0) }}"
   with_items:
-    - "{{ mongodb_replication_params|default([]) }}"
+    - "{{ ansible_play_hosts|default([]) }}"
   register: mongodb_replica_init
   ignore_errors: true
 
@@ -26,11 +26,11 @@
     login_user: "{{ mongodb_root_admin_name }}"
     login_password: "{{ mongodb_root_admin_password }}"
     replica_set: "{{ mongodb_replication_replset }}"
-    host_name: "{{ item.host_name }}"
-    host_port: "{{ item.host_port|default(27017) }}"
-    host_type: "{{ item.host_type|default('replica') }}"
-    hidden: "{{ item.hidden|default(false) }}"
-    priority: "{{ item.priority|default(1.0) }}"
+    host_name: "{{ item }}"
+    host_port: "{{ hostvar[item].host_port|default(27017) }}"
+    host_type: "{{ hostvar[item].host_type|default('replica') }}"
+    hidden: "{{ hostvar[item].hidden|default(false) }}"
+    priority: "{{ hostvar[item].priority|default(1.0) }}"
   when: mongodb_replica_init|failed
   with_items:
-    - "{{ mongodb_replication_params|default([]) }}"
+    - "{{ ansible_play_hosts|default([]) }}"
