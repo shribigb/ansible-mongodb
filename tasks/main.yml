@@ -1,9 +1,5 @@
 ---
 
-#- name: Include Linux system optimization
-#  include: system_optimization.yml
-#  tags: [mongodb]
-
 - include_vars: "{{ ansible_distribution }}.yml"
 
 - include: "{{ ansible_distribution }}/install.yml"
