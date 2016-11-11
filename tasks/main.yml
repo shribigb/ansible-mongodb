@@ -1,9 +1,5 @@
 ---
 
-- debug: msg="mongodb_login_host = {{ mongodb_login_host }}"
-  tags: 
-    - debug
-
 #- name: Include Linux system optimization
 #  include: system_optimization.yml
 #  tags: [mongodb]
@@ -17,8 +13,6 @@
   include: configure.yml
   tags: [mongodb]
 
-- debug: msg="mongodb_security_authorization={{ mongodb_security_authorization }}"
-
 - name: Include replication and auth configuration
   include: replication_init_auth.yml
   when: ( mongodb_replication_replset
@@ -30,7 +24,9 @@
 - name: Include replication configuration
   include: replication.yml
   when: ( mongodb_replication_replset 
-        and mongodb_replication_replset != '' )
+        and mongodb_replication_replset != ''
+        and mongodb_security_authorization == 'disabled'
+        and mongodb_master is defined and mongodb_master )
   tags: [mongodb]
 
 - name: Include user creation

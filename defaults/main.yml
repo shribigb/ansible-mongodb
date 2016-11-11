@@ -7,6 +7,8 @@ mongodb_apt_keyserver: keyserver.ubuntu.com      # Ubuntu-specific parameter
 mongodb_apt_key_id: "{{ 'EA312927' if mongodb_version[0:3] == '3.2' else '7F0CEB10' }}"
 
 mongodb_pymongo_from_pip: true                   # Install latest PyMongo via PIP or package manager
+mongodb_pymongo_pip_version: "3.3"
+
 mongodb_force_wait_for_port: false
 mongodb_user_update_password: "on_create"        # MongoDB user password update default policy
 mongodb_manage_service: true
@@ -17,14 +19,14 @@ mongodb_gid:
 mongodb_daemon_name: "{{ 'mongod' if ('mongodb-org' or 'mongodb-enterprise' in mongodb_package) else 'mongodb' }}"
 
 ## net Options
-mongodb_net_bindip: 0.0.0.0                    # Comma separated list of ip addresses to listen on
+mongodb_net_bindip: 0.0.0.0                      # Comma separated list of ip addresses to listen on
 mongodb_net_http_enabled: false                  # Enable http interface
 mongodb_net_ipv6: false                          # Enable IPv6 support (disabled by default)
 mongodb_net_maxconns: 65536                      # Max number of simultaneous connections
 mongodb_net_port: 27017                          # Specify port number
 
 ## processManagement Options
-mongodb_processmanagement_fork: false            # Fork server process
+mongodb_processmanagement_fork: true             # Fork server process
 
 ## security Options
 # Disable or enable security. Possible values: 'disabled', 'enabled'
@@ -54,7 +56,7 @@ mongodb_systemlog_path: /var/log/mongodb/{{ mongodb_daemon_name }}.log   # Log f
 ## replication Options
 mongodb_replication_replset:                      # Enable replication <setname>[/<optionalseedhostlist>]
 mongodb_replication_replindexprefetch: "all"      # specify index prefetching behavior (if secondary) [none|_id_only|all]
-mongodb_replication_oplogsize: 1024               # specifies a maximum size in megabytes for the replication operation log
+mongodb_replication_oplogsize: 1024                # specifies a maximum size in megabytes for the replication operation log
 
 # MMS Agent
 mongodb_mms_agent_pkg: https://cloud.mongodb.com/download/agent/automation/mongodb-mms-automation-agent-manager-3.2.4.1901-1.x86_64.rpm
