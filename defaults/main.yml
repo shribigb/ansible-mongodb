@@ -1,5 +1,13 @@
 ---
 
+mongodb_login_host_temp: |
+  {% for host in ansible_play_hosts %}
+    {% if hostvars[host].mongodb_master is defined %}
+      "{{ hostvars[host].ansible_eth0.ipv4.address }}"
+    {% endif %}
+  {% endfor %}
+mongodb_login_host: "{{ mongodb_login_host_temp | replace('\n', '') | replace('\"', '') | replace(' ', '')}}"
+
 mongodb_package: mongodb-enterprise              # mongodb-enterprise or mongodb-org
 mongodb_version: "3.2"
 
