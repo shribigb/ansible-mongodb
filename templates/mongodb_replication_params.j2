@@ -1,5 +1,0 @@
-[
-{% for host in groups['icemongo_mongo'] %}
-  { hostname: "{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}", host_port: "{{ mongodb_net_port }}", host_type: replica }
-{% endfor %}
-]

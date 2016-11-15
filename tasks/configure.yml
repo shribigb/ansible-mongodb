@@ -18,7 +18,7 @@
 #  when: mongodb_uid
 
 - name: reset mongodb folder and subfolders with new uid
-  file: path={{ mongodb_storage_dbpath }} owner=mongodb group=mongodb follow=yes recurse=yes state=directory
+  file: path={{ mongodb_storage_dbpath }} owner=mongod group=mongod follow=yes recurse=yes state=directory
   when: mongodb_uid
 
 - name: Create log dir if missing
@@ -60,11 +60,14 @@
 - name: Set fact about wait_for host address
   set_fact:
     wait_for_host: 127.0.0.1
-  when: mongodb_net_bindip == "0.0.0.0"
+  when: mongodb_net_bindip == "127.0.0.1"
   
-- name: Wait when mongodb is started
-  wait_for:
-    host: "{{ wait_for_host | default(mongodb_net_bindip) }}"
-    port: "{{ mongodb_net_port }}"
-    timeout: 120
-    delay: 20
+#- name: Wait when mongodb is started
+#  wait_for:
+#    host: "{{ wait_for_host | default(mongodb_net_bindip) }}"
+#    port: "{{ mongodb_net_port }}"
+#    timeout: 120
+#    delay: 20
+
+- name: Wait til MongoDB port is listening
+  wait_for: host={{ mongodb_net_bindip }} port={{ mongodb_net_port }} delay=5 state=started

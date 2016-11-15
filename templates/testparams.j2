@@ -1,5 +1,0 @@
-{
-  {% for host in {{ testhosts }} %}
-  "hostname":"{{hostvars[host]['ansible_eth0']['ipv4']['address']}}"
-  {% endfor %}
-}
