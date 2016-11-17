@@ -4,7 +4,12 @@
 #  include: install.deb.yml
 #  when: ansible_os_family == 'Debian'
 #  tags: [mongodb]
+
 - include_vars: "{{ansible_distribution}}.yml"
+
+- name: Include Linux system optimization
+  include: system_optimization.yml
+  tags: [system]
 
 - include: "{{ansible_os_family}}/install.yml"
   tags: [mongodb]
