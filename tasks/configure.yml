@@ -37,6 +37,7 @@
     path: "{{ mongodb_storage_dbpath }}"
     state: directory
     owner: "{{ mongodb_user }}"
+    group: "{{ mongodb_user }}"
     recurse: yes
 
 - name: Configure mongodb
