@@ -13,6 +13,16 @@
   yum: name=python-pymongo state=latest
   when: not mongodb_pymongo_from_pip
 
+- name: Install PIP pt.1
+  get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /tmp/get-pip.py
+  when: mongodb_pymongo_from_pip
+
+- name: Install PIP pt.2
+  command: python /tmp/get-pip.py
+  when: mongodb_pymongo_from_pip
+
 - name: Install PyMongo from PIP
   pip: name=pymongo version="{{ mongodb_pymongo_pip_version }}" state=present
   when: mongodb_pymongo_from_pip
