@@ -20,7 +20,7 @@
 - include: auth_initialization.yml
 #  when: mongodb_replica_init|failed
 
-- name: Replication configuration | 2nd Pt
+- name: Replication configuration
   mongodb_replication:
     login_host: "{{ mongodb_login_host|default('localhost') }}"
     login_port: "{{ mongodb_login_port|default(27017) }}"

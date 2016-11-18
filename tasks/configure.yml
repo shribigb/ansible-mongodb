@@ -1,5 +1,11 @@
 ---
 
+- name: Define master node if not exist
+  set_fact:
+    mongodb_master: True
+  when: ( inventory_hostname == ansible_play_hosts[0]
+          and mongodb_master is not defined )
+
 - name: Create keyFile
   copy:
     dest: "{{ mongodb_security_keyfile }}"
@@ -55,12 +61,12 @@
   file: path=/var/run/mongodb/mongod.pid state=absent
   when: ansible_distribution == 'CentOS'
 
-- name: Reset SELinux permission for data path
+- name: Set SELinux permission for data path
   shell: chcon -Rv --type=mongod_var_lib_t {{ mongodb_storage_dbpath }}
   when: ( ansible_distribution == 'CentOS'
           and mongodb_storage_dbpath != '/var/lib/mongo' )
 
-- name: Reset SELinux permission for log path
+- name: Set SELinux permission for log path
   shell: chcon -Rv --type=mongod_log_t {{ mongodb_systemlog_path }}
   when: ( ansible_distribution == 'CentOS'
           and mongodb_systemlog_path != '/var/log/mongodb/mongod.log' )
