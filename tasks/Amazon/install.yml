@@ -4,12 +4,10 @@
   template: src=mongo.repo.j2 dest=/etc/yum.repos.d/mongo.repo
 
 - name: Install MongoDB package
-  yum: name={{item}} state=present
-  with_items:
-    - "{{mongodb_package}}"
+  yum: name={{ mongodb_package }} state=present
 
 - name: Ensure dbpath directory
-  file: path={{mongodb_storage_dbpath}} state=directory owner={{ mongodb_user }} recurse=yes
+  file: path={{ mongodb_storage_dbpath }} state=directory owner={{ mongodb_user }} recurse=yes
 
 - name: Install PyMongo package
   yum: name=python-pymongo state=latest

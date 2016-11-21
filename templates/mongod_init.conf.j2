@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 net:
-  bindIp: '127.0.0.1'
+  bindIp: {{ mongodb_net_bindip }}
   http:
     enabled: {{ mongodb_net_http_enabled | to_nice_json }}
   ipv6: {{ mongodb_net_ipv6 | to_nice_json }}
@@ -10,6 +10,7 @@ net:
 
 processManagement:
   fork: {{ mongodb_processmanagement_fork | to_nice_json }}
+  pidFilePath: /var/run/mongodb/mongod.pid
   
 security:
   authorization: 'disabled'

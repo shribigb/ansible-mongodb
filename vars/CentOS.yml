@@ -1,3 +1,4 @@
 ---
 
 mongodb_user: mongod
+repo_baseurl: https://repo.mongodb.com/yum/redhat/$releasever/mongodb-enterprise/{{ mongodb_version }}/x86_64/

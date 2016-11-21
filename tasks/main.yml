@@ -1,17 +1,17 @@
 ---
 
+- include_vars: "{{ ansible_distribution }}.yml"
 #- name: Include installation on Debian-based OS
 #  include: install.deb.yml
 #  when: ansible_os_family == 'Debian'
 #  tags: [mongodb]
 
-- include_vars: "{{ansible_distribution}}.yml"
 
 - name: Include Linux system optimization
   include: system_optimization.yml
   tags: [system]
 
-- include: "{{ansible_os_family}}/install.yml"
+- include: "{{ ansible_distribution }}/install.yml"
   tags: [mongodb]
 
 - name: Include configuration.yml
@@ -28,67 +28,19 @@
 
 - name: Include replication configuration
   include: replication.yml
-  when: mongodb_replication_replset and mongodb_replication_replset != ''
-  tags: [mongodb]
-
-- name: Check user admin is exists
-  command: >
-    mongo --quiet -u {{ mongodb_user_admin_name }} \
-          -p {{ mongodb_user_admin_password }} --eval 'db.version()' admin
-  register: mongodb_user_admin_check
-  changed_when: false
-  always_run: yes # side-effect free, so it can be run in check-mode as well
-  ignore_errors: true
-  when: ( mongodb_security_authorization == 'enabled'
-          and (not mongodb_replication_replset
-          or mongodb_replication_replset == '') )
-  tags: [mongodb]
-
-- name: Include authorization configuration
-  include: auth_initialization.yml
-  when: ( mongodb_security_authorization == 'enabled'
-          and (not mongodb_replication_replset
-          or mongodb_replication_replset == '')
-          and mongodb_user_admin_check.rc != 0 )
-  tags: [mongodb]
-
-- name: create normal users with replicaset
-  mongodb_user:
-    database: "{{ item.database }}"
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
-    update_password: "{{ mongodb_user_update_password }}"
-    roles: "{{ item.roles }}"
-    login_user: "{{ mongodb_user_admin_name }}"
-    login_password: "{{ mongodb_user_admin_password }}"
-    login_port: "{{ mongodb_login_port|default(27017) }}"
-    login_host: "{{ mongodb_login_host|default('localhost') }}"
-  with_items:
-    - "{{ mongodb_users | default([]) }}"
-  when: ( mongodb_replication_replset
+  when: ( mongodb_replication_replset 
         and mongodb_replication_replset != ''
-        and mongodb_security_authorization == 'enabled'
+        and mongodb_security_authorization == 'disabled'
         and mongodb_master is defined and mongodb_master )
   tags: [mongodb]
 
-- name: create normal users without replicaset
-  mongodb_user:
-    database: "{{ item.database }}"
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
-    update_password: "{{ mongodb_user_update_password }}"
-    roles: "{{ item.roles }}"
-    login_user: "{{ mongodb_user_admin_name }}"
-    login_password: "{{ mongodb_user_admin_password }}"
-    login_port: "{{ mongodb_net_port }}"
-  with_items:
-    - "{{ mongodb_users | default([]) }}"
-  when: ( mongodb_security_authorization == 'enabled'
-          and (not mongodb_replication_replset
-          or mongodb_replication_replset == '') )
+- name: Include user creation
+  include: create_users.yml
+  when: mongodb_security_authorization == 'enabled'
   tags: [mongodb]
 
-- name: Include MMS Agent configuration
-  include: mms-agent.yml
+- name: Install Automation Agent
+  include: automation_agent.yml
   when: mongodb_mms_api_key != ""
   tags: [mongodb]
+

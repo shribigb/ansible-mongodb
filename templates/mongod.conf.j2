@@ -15,7 +15,6 @@ processManagement:
 
 {% if mongodb_replication_replset -%}
 replication:
-  oplogSizeMB: {{ mongodb_replication_oplogsize | int }}
   replSetName: {{ mongodb_replication_replset }}
   {% if mongodb_storage_engine == 'mmapv1' -%}
   secondaryIndexPrefetch: {{ mongodb_replication_replindexprefetch }}

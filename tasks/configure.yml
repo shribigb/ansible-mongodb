@@ -1,5 +1,11 @@
 ---
 
+- name: Define master node if not exist
+  set_fact:
+    mongodb_master: True
+  when: ( inventory_hostname == ansible_play_hosts[0]
+          and mongodb_master is not defined )
+
 - name: Create keyFile
   copy:
     dest: "{{ mongodb_security_keyfile }}"
@@ -9,17 +15,17 @@
     mode: 0600
   when: mongodb_replication_replset and  mongodb_replication_replset != ''
 
-- name: set mongodb gid
-  group: name=mongodb gid={{ mongodb_gid }} state=present
+#- name: set mongodb gid
+#  group: name=mongodb gid={{ mongodb_gid }} state=present
 #  when: mongodb_gid
 
-- name: set mongodb uid
-  user: name=mongodb uid={{ mongodb_uid }} group=mongodb state=present
+#- name: set mongodb uid
+#  user: name=mongodb uid={{ mongodb_uid }} group=mongodb state=present
 #  when: mongodb_uid
 
-- name: reset mongodb folder and subfolders with new uid
-  file: path={{ mongodb_storage_dbpath }} owner=mongodb group=mongodb follow=yes recurse=yes state=directory
-  when: mongodb_uid
+#- name: reset mongodb folder and subfolders with new uid
+#  file: path={{ mongodb_storage_dbpath }} owner=mongod group=mongod follow=yes recurse=yes state=directory
+#  when: mongodb_uid
 
 - name: Create log dir if missing
   file: state=directory recurse=yes dest={{ mongodb_systemlog_path|dirname }} owner={{ mongodb_user }} group={{mongodb_user}} mode=0755
@@ -37,6 +43,7 @@
     path: "{{ mongodb_storage_dbpath }}"
     state: directory
     owner: "{{ mongodb_user }}"
+    group: "{{ mongodb_user }}"
     recurse: yes
 
 - name: Configure mongodb
@@ -50,21 +57,38 @@
 #- name: Wait for Clean Mongo Stop
 #  wait_for: path={{ mongodb_storage_dbpath }}/mongod.lock state=absent
 
+- name: Clear existing mongod.pid
+  file: path=/var/run/mongodb/mongod.pid state=absent
+  when: ansible_distribution == 'CentOS'
+
+- name: Set SELinux permission for data path
+  shell: chcon -Rv --type=mongod_var_lib_t {{ mongodb_storage_dbpath }}
+  when: ( ansible_distribution == 'CentOS'
+          and mongodb_storage_dbpath != '/var/lib/mongo' )
+
+- name: Set SELinux permission for log path
+  shell: chcon -Rv --type=mongod_log_t {{ mongodb_systemlog_path }}
+  when: ( ansible_distribution == 'CentOS'
+          and mongodb_systemlog_path != '/var/log/mongodb/mongod.log' )
+
 - name: mongodb start
   service: name={{ mongodb_daemon_name }} state=started
   when: config_result|changed and mongodb_manage_service
 
-- name: Ensure service is started
-  service: name={{ mongodb_daemon_name }} state=started
+- name: Ensure service is started and on boot
+  service: name={{ mongodb_daemon_name }} state=started enabled=yes
 
 - name: Set fact about wait_for host address
   set_fact:
     wait_for_host: 127.0.0.1
-  when: mongodb_net_bindip == "0.0.0.0"
+  when: mongodb_net_bindip == "127.0.0.1"
   
-- name: Wait when mongodb is started
-  wait_for:
-    host: "{{ wait_for_host | default(mongodb_net_bindip) }}"
-    port: "{{ mongodb_net_port }}"
-    timeout: 120
-    delay: 20
+#- name: Wait when mongodb is started
+#  wait_for:
+#    host: "{{ wait_for_host | default(mongodb_net_bindip) }}"
+#    port: "{{ mongodb_net_port }}"
+#    timeout: 120
+#    delay: 20
+
+- name: Wait til MongoDB port is listening
+  wait_for: host={{ mongodb_net_bindip }} port={{ mongodb_net_port }} delay=5 state=started
