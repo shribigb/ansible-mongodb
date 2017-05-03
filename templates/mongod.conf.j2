@@ -12,7 +12,6 @@ processManagement:
   fork: {{ mongodb_processmanagement_fork | to_nice_json}}
   pidFilePath: /var/run/mongodb/mongod.pid
 
-
 {% if mongodb_replication_replset -%}
 replication:
   replSetName: {{ mongodb_replication_replset }}
@@ -35,6 +34,7 @@ storage:
   journal:
     enabled: {{ mongodb_storage_journal_enabled | to_nice_json }}
   {% if mongodb_storage_engine == 'mmapv1' -%}
+  directoryPerDB: {{ mongodb_storage_directoryperdb }}
   mmapv1:
     quota:
       enforced: {{ mongodb_storage_quota_enforced | to_nice_json }}
